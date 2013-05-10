@@ -80,7 +80,11 @@
                 if (attr.match(pathChecker)) {
                     var pathTokens = getPathArray(attr), initials = _.initial(pathTokens), last = pathTokens[pathTokens.length - 1],
                         parentModel = this.get(initials);
-                    if (parentModel instanceof AssociatedModel) {
+                    if (typeof parentModel == 'undefined') { // @TODO changes this so that set('child.a', 1) works even when child is null
+                        obj = modelMap[this.cid] || (modelMap[this.cid] = {'model':this, 'data':{}});
+                        obj.data[initials[0]] || (obj.data[initials[0]] = {});
+                        obj.data[initials[0]][last] = attributes[attr];
+                    } else if (parentModel instanceof AssociatedModel) {
                         obj = modelMap[parentModel.cid] || (modelMap[parentModel.cid] = {'model':parentModel, 'data':{}});
                         obj.data[last] = attributes[attr];
                     }
